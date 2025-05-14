@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Blink Morse Code Interpreter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .slide-container {
+            width: 800px;
+            margin: 20px auto;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        .title-slide {
+            text-align: center;
+            padding: 50px 0;
+            background-color: #2a5599;
+            color: white;
+        }
+        h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        h2 {
+            font-size: 30px;
+            color: #2a5599;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+        h3 {
+            font-size: 24px;
+            color: #2a5599;
+        }
+        .columns {
+            display: flex;
+            justify-content: space-between;
+        }
+        .column {
+            flex: 1;
+            padding: 0 10px;
+        }
+        ul {
+            padding-left: 25px;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        .image-placeholder {
+            width: 100%;
+            height: 200px;
+            background-color: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px dashed #999;
+            margin: 15px 0;
+        }
+        .code-block {
+            background-color: #f8f8f8;
+            border-left: 4px solid #2a5599;
+            padding: 10px;
+            font-family: monospace;
+            overflow-x: auto;
+            white-space: pre;
+            font-size: 14px;
+        }
+        .small-text {
+            font-size: 14px;
+        }
+        .footer {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .diagram {
+            width: 100%;
+            height: 200px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
+        }
+        .diagram-box {
+            width: 80%;
+            height: 40px;
+            background-color: #2a5599;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 5px 0;
+            position: relative;
+        }
+        .diagram-arrow {
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid #2a5599;
+            margin: -5px 0;
+        }
+        .morse-diagram {
+            width: 100%;
+            height: 100px;
+            position: relative;
+        }
+        .timeline {
+            position: absolute;
+            height: 2px;
+            background-color: black;
+            width: 90%;
+            top: 50px;
+            left: 5%;
+        }
+        .timeline-arrow {
+            position: absolute;
+            right: 5%;
+            top: 46px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid black;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+        }
+        .blink-pattern {
+            position: absolute;
+            top: 30px;
+            left: 5%;
+            width: 90%;
+            height: 40px;
+        }
+        .eye-open {
+            position: absolute;
+            height: 20px;
+            background-color: #2a5599;
+            top: 0;
+        }
+        .eye-closed {
+            position: absolute;
+            height: 20px;
+            background-color: white;
+            top: 0;
+        }
+        .morse-label {
+            position: absolute;
+            top: 70px;
+            font-size: 18px;
+            text-align: center;
+            width: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Slide 1: Title Slide -->
+    <div class="slide-container title-slide">
+        <h1>Blink Morse Code Interpreter</h1>
+        <h3>An Assistive Technology for Communication</h3>
+        <p>by <b>Satvat Sagar</b></p>
+        <p>May 14, 2025</p>
+    </div>
+
+    <!-- Slide 2: Outline -->
+    <div class="slide-container">
+        <h2>Presentation Outline</h2>
+        <ul>
+            <li>Introduction and Problem Statement</li>
+            <li>System Overview</li>
+            <li>Technical Implementation</li>
+            <li>Morse Code Translation</li>
+            <li>Web Interface</li>
+            <li>Results and Challenges</li>
+            <li>Future Improvements</li>
+            <li>Conclusion</li>
+        </ul>
+    </div>
+
+    <!-- Slide 3: Introduction -->
+    <div class="slide-container">
+        <h2>The Problem</h2>
+        <ul>
+            <li>Millions of people worldwide have mobility impairments that limit communication</li>
+            <li>Many retain control of eye movements even when other motor functions are limited</li>
+            <li>Current assistive communication technologies can be:
+                <ul>
+                    <li>Expensive</li>
+                    <li>Difficult to set up</li>
+                    <li>Not widely accessible</li>
+                </ul>
+            </li>
+            <li>Need for affordable, accessible communication solutions</li>
+        </ul>
+    </div>
+
+    <!-- Slide 4: Our Solution -->
+    <div class="slide-container">
+        <h2>Our Solution</h2>
+        <div class="columns">
+            <div class="column">
+                <ul>
+                    <li>Blink Morse Code Interpreter</li>
+                    <li>Uses standard webcam</li>
+                    <li>Translates eye blinks to text</li>
+                    <li>Text-to-speech output</li>
+                    <li>Affordable and accessible</li>
+                    <li>Non-invasive approach</li>
+                </ul>
+            </div>
+            <div class="column">
+                <div class="image-placeholder">
+                    <img src="Screenshot 2025-05-14 002820.png" alt="System Overview Diagram" style="width:100%; height:auto; border: 1px solid #ccc;">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 5: System Architecture -->
+    <div class="slide-container">
+        <h2>System Architecture</h2>
+        <div class="diagram">
+            <div class="diagram-box">Camera Input</div>
+            <div class="diagram-arrow"></div>
+            <div class="diagram-box">Vision Processing</div>
+            <div class="diagram-arrow"></div>
+            <div class="diagram-box">Morse Code Detection</div>
+            <div class="diagram-arrow"></div>
+            <div class="diagram-box">Text Decoder</div>
+            <div class="diagram-arrow"></div>
+            <div class="diagram-box">Output (Text/Speech)</div>
+        </div>
+    </div>
+
+    <!-- Slide 6: Core Technologies -->
+    <div class="slide-container">
+        <h2>Core Technologies</h2>
+        <div class="columns">
+            <div class="column">
+                <h3>Computer Vision</h3>
+                <ul>
+                    <li>OpenCV for image processing</li>
+                    <li>dlib for facial landmark detection</li>
+                    <li>Face detection with HOG detector</li>
+                    <li>68-point facial landmark model</li>
+                </ul>
+            </div>
+            <div class="column">
+                <h3>Web & Auxiliary Technologies</h3>
+                <ul>
+                    <li>Flask web framework</li>
+                    <li>pyttsx3 for text-to-speech</li>
+                    <li>Threading for concurrent processing</li>
+                    <li>JSON for data exchange</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 7: Eye Aspect Ratio -->
+    <div class="slide-container">
+        <h2>Eye Aspect Ratio (EAR)</h2>
+        <div class="columns">
+            <div class="column">
+                <ul>
+                    <li>Measures openness of eye</li>
+                    <li>Uses 6 facial landmarks around eye</li>
+                    <li>Mathematical formula:
+                        <br>
+                        <strong>EAR = (|p₂-p₆| + |p₃-p₅|) / (2|p₁-p₄|)</strong>
+                    </li>
+                    <li>Value decreases when eye closes</li>
+                    <li>Threshold: EAR < 0.22 = closed eye</li>
+                </ul>
+            </div>
+            <div class="column">
+                <div class="image-placeholder">
+                    <img src="Screenshot 2025-05-14 003222.png" alt="System Overview Diagram" style="width:100%; height:auto; border: 1px solid #ccc;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 8: Morse Code Basics -->
+    <div class="slide-container">
+        <h2>Morse Code Basics</h2>
+        <div class="columns">
+            <div class="column">
+                <ul>
+                    <li>Short signals (dots) and long signals (dashes)</li>
+                    <li>Different combinations represent different characters</li>
+                    <li>International standard for communication</li>
+                    <li>Easy to learn basics</li>
+                    <li>Example: SOS = ... --- ...</li>
+                </ul>
+            </div>
+            <div class="column">
+                <table>
+                    <tr>
+                        <th>Character</th>
+                        <th>Morse Code</th>
+                    </tr>
+                    <tr>
+                        <td>A</td>
+                        <td>· —</td>
+                    </tr>
+                    <tr>
+                        <td>B</td>
+                        <td>— · · ·</td>
+                    </tr>
+                    <tr>
+                        <td>C</td>
+                        <td>— · — ·</td>
+                    </tr>
+                    <tr>
+                        <td>E</td>
+                        <td>·</td>
+                    </tr>
+                    <tr>
+                        <td>S</td>
+                        <td>· · ·</td>
+                    </tr>
+                    <tr>
+                        <td>O</td>
+                        <td>— — —</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 9: Blink to Morse Translation -->
+    <div class="slide-container">
+        <h2>Blink to Morse Code Translation</h2>
+        <ul>
+            <li><strong>Short blink</strong> (4 frames): Dot (.)</li>
+            <li><strong>Long blink</strong> (16 frames): Dash (-)</li>
+            <li><strong>Short pause</strong> (35 frames): Character separator (/)</li>
+            <li><strong>Long pause</strong> (60 frames): Word separator (¦/)</li>
+            <li><strong>Very long closure</strong> (100 frames): End session</li>
+        </ul>
+        <div class="morse-diagram">
+            <div class="timeline"></div>
+            <div class="timeline-arrow"></div>
+            <div class="blink-pattern">
+                <div class="eye-open" style="left: 0%; width: 10%;"></div>
+                <div class="eye-closed" style="left: 10%; width: 5%;"></div>
+                <div class="eye-open" style="left: 15%; width: 15%;"></div>
+                <div class="eye-closed" style="left: 30%; width: 15%;"></div>
+                <div class="eye-open" style="left: 45%; width: 20%;"></div>
+                <div class="eye-closed" style="left: 65%; width: 5%;"></div>
+                <div class="eye-open" style="left: 70%; width: 30%;"></div>
+            </div>
+            <div class="morse-label" style="left: 10%;">.</div>
+            <div class="morse-label" style="left: 30%;">-</div>
+            <div class="morse-label" style="left: 55%;">/</div>
+            <div class="morse-label" style="left: 65%;">.</div>
+        </div>
+    </div>
+
+    <!-- Slide 10: Core Algorithm -->
+    <div class="slide-container">
+        <h2>Core Algorithm: Eye Aspect Ratio</h2>
+        <div class="code-block">
+def compute_eye_aspect_ratio(eye_points):
+    # Calculate vertical distances
+    vertical_dist_1 = math.dist(eye_points[1], eye_points[5])
+    vertical_dist_2 = math.dist(eye_points[2], eye_points[4])
+
+    # Calculate horizontal distance
+    horizontal_dist = math.dist(eye_points[0], eye_points[3])
+
+    # Compute eye aspect ratio (EAR)
+    ear = (vertical_dist_1 + vertical_dist_2) / (2.0 * horizontal_dist)
+
+    return ear</div>
+    </div>
+
+    <!-- Slide 11: Blink Detection Code -->
+    <div class="slide-container">
+        <h2>Blink Detection Code</h2>
+        <div class="code-block">
+# Detect blinks and convert to Morse code
+if average_ear < EYE_AR_THRESH:
+    blink_counter += 1
+    
+    if blink_counter >= EYE_AR_CONSEC_FRAMES:
+        eyes_closed = True
+        
+else:
+    if blink_counter >= EYE_AR_CONSEC_FRAMES_CLOSED:
+        morse_word += "-"  # Dash for long blink
+    elif eyes_closed:
+        morse_word += "."  # Dot for short blink
+    
+    blink_counter = 0
+    eyes_closed = False</div>
+    </div>
+
+    <!-- Slide 12: Key Parameters -->
+    <div class="slide-container">
+        <h2>Key Parameters</h2>
+        <table>
+            <tr>
+                <th>Parameter</th>
+                <th>Value</th>
+                <th>Purpose</th>
+            </tr>
+            <tr>
+                <td>EYE_AR_THRESH</td>
+                <td>0.22</td>
+                <td>Threshold for detecting closed eyes</td>
+            </tr>
+            <tr>
+                <td>EYE_AR_CONSEC_FRAMES</td>
+                <td>4</td>
+                <td>Frames needed for a dot</td>
+            </tr>
+            <tr>
+                <td>EYE_AR_CONSEC_FRAMES_CLOSED</td>
+                <td>16</td>
+                <td>Frames needed for a dash</td>
+            </tr>
+            <tr>
+                <td>PAUSE_CONSEC_FRAMES</td>
+                <td>35</td>
+                <td>Frames to separate characters</td>
+            </tr>
+            <tr>
+                <td>WORD_PAUSE_CONSEC_FRAMES</td>
+                <td>60</td>
+                <td>Frames to separate words</td>
+            </tr>
+            <tr>
+                <td>BREAK_LOOP_FRAMES</td>
+                <td>100</td>
+                <td>Frames to end the session</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Slide 13: Web Interface -->
+    <div class="slide-container">
+        <h2>Web Interface</h2>
+        <div class="columns">
+            <div class="column">
+                <ul>
+                    <li>Flask-based web application</li>
+                    <li>Features:
+                        <ul>
+                            <li>Start/stop detection</li>
+                            <li>Real-time display of:
+                                <ul class="small-text">
+                                    <li>Current Morse character</li>
+                                    <li>Current word</li>
+                                    <li>Complete message</li>
+                                    <li>EAR value</li>
+                                </ul>
+                            </li>
+                            <li>Text-to-speech output</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div class="column">
+                <div class="image-placeholder">
+                    <img src="Screenshot (215).png" alt="System Overview Diagram" style="width:100%; height:auto; border: 1px solid #ccc;">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 14: Current Capabilities -->
+    <div class="slide-container">
+        <h2>Current Capabilities</h2>
+        <ul>
+            <li>Real-time blink detection and Morse code translation</li>
+            <li>Support for full alphabet, numbers, and basic punctuation</li>
+            <li>Adjustable sensitivity and timing parameters</li>
+            <li>Text-to-speech output for immediate feedback</li>
+            <li>Simple and intuitive web interface</li>
+            <li>Works with standard webcams</li>
+            <li>JSON-based data exchange between components</li>
+        </ul>
+    </div>
+
+    <!-- Slide 15: Challenges -->
+    <div class="slide-container">
+        <h2>Challenges</h2>
+        <div class="columns">
+            <div class="column">
+                <h3>Environmental Factors</h3>
+                <ul>
+                    <li>Lighting conditions</li>
+                    <li>Camera quality</li>
+                    <li>User positioning</li>
+                </ul>
+                
+                <h3>User Factors</h3>
+                <ul>
+                    <li>Learning curve for Morse code</li>
+                    <li>Fatigue from extended use</li>
+                    <li>Individual blinking patterns</li>
+                </ul>
+            </div>
+            <div class="column">
+                <h3>Technical Limitations</h3>
+                <ul>
+                    <li>Processing speed</li>
+                    <li>False positives/negatives</li>
+                    <li>Parameter tuning</li>
+                </ul>
+                
+                <h3>Solutions</h3>
+                <ul>
+                    <li>Calibration routine for individuals</li>
+                    <li>Adaptive thresholds</li>
+                    <li>Enhanced face tracking algorithm</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 16: Future Improvements -->
+    <div class="slide-container">
+        <h2>Future Improvements</h2>
+        <div class="columns">
+            <div class="column">
+                <h3>Enhanced Interface</h3>
+                <ul>
+                    <li>User profiles with personalized settings</li>
+                    <li>Visual feedback for blink detection</li>
+                    <li>Mobile compatibility</li>
+                </ul>
+                
+                <h3>Advanced Features</h3>
+                <ul>
+                    <li>Predictive text input</li>
+                    <li>Customizable shortcuts for common phrases</li>
+                    <li>Integration with other applications</li>
+                </ul>
+            </div>
+            <div class="column">
+                <h3>Technical Improvements</h3>
+                <ul>
+                    <li>Machine learning for personalized detection</li>
+                    <li>Improved low-light performance</li>
+                    <li>Reduced computational requirements</li>
+                </ul>
+                
+                <h3>Accessibility Enhancements</h3>
+                <ul>
+                    <li>Multi-language support</li>
+                    <li>Integration with home automation</li>
+                    <li>Emergency alert functionality</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 17: Potential Applications -->
+    <div class="slide-container">
+        <h2>Potential Applications</h2>
+        <div class="columns">
+            <div class="column">
+                <h3>Medical Settings</h3>
+                <ul>
+                    <li>Communication for patients with limited mobility</li>
+                    <li>Post-surgery communication</li>
+                    <li>ICU settings</li>
+                </ul>
+                
+                <h3>Accessibility</h3>
+                <ul>
+                    <li>ALS patients</li>
+                    <li>Quadriplegia</li>
+                    <li>Temporary mobility restrictions</li>
+                </ul>
+            </div>
+            <div class="column">
+                <h3>Other Use Cases</h3>
+                <ul>
+                    <li>Silent communication</li>
+                    <li>Hands-free control systems</li>
+                    <li>Educational tool for learning Morse code</li>
+                </ul>
+                
+                <h3>Extended Applications</h3>
+                <ul>
+                    <li>Gaming accessibility</li>
+                    <li>Virtual reality control</li>
+                    <li>Rehabilitation exercises</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 18: Summary -->
+    <div class="slide-container">
+        <h2>Summary</h2>
+        <ul>
+            <li>Developed a functioning blink-based Morse code communication system</li>
+            <li>Uses computer vision to translate eye blinks to text</li>
+            <li>Accessible solution requiring only a standard webcam</li>
+            <li>Potential to significantly improve quality of life for people with mobility impairments</li>
+            <li>Open platform that can be extended and improved</li>
+            <li>Multiple applications across healthcare, accessibility, and general use</li>
+        </ul>
+    </div>
+
+    <!-- Slide 19: Thank You -->
+    <div class="slide-container title-slide">
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <h1>Thank You!</h1>
+        <h3>   </h3>
+        <br>
+        <br>
+        <br>
+        
+        <p> </p>
+    </div>
+
+    <div class="footer">
+        Blink Morse Code Interpreter Project - May 2025
+    </div>
+</body>
+</html>
